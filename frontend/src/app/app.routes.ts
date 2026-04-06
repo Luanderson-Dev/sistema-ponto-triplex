@@ -8,7 +8,7 @@ export const routes: Routes = [
     loadComponent: () => import('./features/login/login.component').then((m) => m.LoginComponent),
   },
   {
-    path: 'admin',
+    path: '',
     canActivate: [authGuard],
     loadComponent: () =>
       import('./features/admin/admin-layout.component').then((m) => m.AdminLayoutComponent),
@@ -35,8 +35,12 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/admin/ponto/admin-pontos.component').then((m) => m.AdminPontosComponent),
       },
+      {
+        path: 'perfil',
+        loadComponent: () =>
+          import('./features/admin/perfil/perfil.component').then((m) => m.PerfilComponent),
+      },
     ],
   },
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: '**', redirectTo: 'login' },
 ];

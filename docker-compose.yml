@@ -23,6 +23,9 @@ services:
       SECURITY_PEPPER: ${SECURITY_PEPPER}
       JWT_SEGREDO: ${JWT_SEGREDO}
       APP_SECURITY_COOKIE_SEGURO: "true"
+      ADMIN_NOME: ${ADMIN_NOME:-Administrador}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-}
+      ADMIN_SENHA: ${ADMIN_SENHA:-}
     depends_on:
       db:
         condition: service_healthy

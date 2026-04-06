@@ -1,6 +1,7 @@
 package com.triplex.ponto.infrastructure.web;
 
 import com.triplex.ponto.domain.exception.CredenciaisInvalidasException;
+import com.triplex.ponto.domain.exception.SenhaIncorretaException;
 import com.triplex.ponto.domain.exception.TokenInvalidoException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -18,6 +19,11 @@ public class AuthExceptionHandler {
     @ExceptionHandler(TokenInvalidoException.class)
     public ProblemDetail handleTokenInvalido(TokenInvalidoException ex) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
+    }
+
+    @ExceptionHandler(SenhaIncorretaException.class)
+    public ProblemDetail handleSenhaIncorreta(SenhaIncorretaException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

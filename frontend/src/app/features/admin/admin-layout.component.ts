@@ -13,7 +13,7 @@ import { AuthService } from '../../core/auth/auth.service';
             <div class="flex items-center space-x-8">
               <span class="text-xl font-bold text-gray-800">Ponto da Triplex</span>
               <a
-                routerLink="/admin/ponto"
+                routerLink="/ponto"
                 routerLinkActive="text-blue-600 border-b-2 border-blue-600"
                 class="text-gray-600 hover:text-gray-800 h-16 flex items-center px-1 text-sm font-medium"
               >
@@ -21,14 +21,14 @@ import { AuthService } from '../../core/auth/auth.service';
               </a>
               @if (auth.eAdmin()) {
                 <a
-                  routerLink="/admin/pontos"
+                  routerLink="/pontos"
                   routerLinkActive="text-blue-600 border-b-2 border-blue-600"
                   class="text-gray-600 hover:text-gray-800 h-16 flex items-center px-1 text-sm font-medium"
                 >
                   Registros
                 </a>
                 <a
-                  routerLink="/admin/usuarios"
+                  routerLink="/usuarios"
                   routerLinkActive="text-blue-600 border-b-2 border-blue-600"
                   class="text-gray-600 hover:text-gray-800 h-16 flex items-center px-1 text-sm font-medium"
                 >
@@ -43,6 +43,12 @@ import { AuthService } from '../../core/auth/auth.service';
                   {{ auth.usuarioLogado()?.role }}
                 </span>
               </span>
+              <a
+                routerLink="/perfil"
+                class="text-sm text-blue-600 hover:text-blue-800 font-medium"
+              >
+                Perfil
+              </a>
               <button
                 (click)="auth.logout()"
                 class="text-sm text-red-600 hover:text-red-800 font-medium"
