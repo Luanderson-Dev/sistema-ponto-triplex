@@ -1,0 +1,131 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-04-06T00:00:00.000Z",
+  "__export_source": "insomnia.desktop",
+  "resources": [
+    {
+      "_id": "wrk_ponto",
+      "_type": "workspace",
+      "name": "Ponto da Triplex API",
+      "description": "Collection para testar autenticação JWT",
+      "scope": "collection"
+    },
+    {
+      "_id": "env_base",
+      "_type": "environment",
+      "parentId": "wrk_ponto",
+      "name": "Local",
+      "data": {
+        "base_url": "http://localhost:8080",
+        "access_token": ""
+      }
+    },
+    {
+      "_id": "fld_auth",
+      "_type": "request_group",
+      "parentId": "wrk_ponto",
+      "name": "Auth"
+    },
+    {
+      "_id": "req_login",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "name": "Login",
+      "method": "POST",
+      "url": "{{ _.base_url }}/auth/login",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"admin@triplex.com\",\n  \"senha\": \"123456\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "parameters": []
+    },
+    {
+      "_id": "req_refresh",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "name": "Refresh Token",
+      "method": "POST",
+      "url": "{{ _.base_url }}/auth/refresh",
+      "body": {},
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "parameters": [],
+      "description": "O refresh token é enviado automaticamente via cookie HttpOnly (setado pelo Login)"
+    },
+    {
+      "_id": "req_logout",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "name": "Logout",
+      "method": "POST",
+      "url": "{{ _.base_url }}/auth/logout",
+      "body": {},
+      "headers": [],
+      "authentication": {},
+      "parameters": [],
+      "description": "Revoga o refresh token e limpa o cookie"
+    },
+    {
+      "_id": "fld_usuarios",
+      "_type": "request_group",
+      "parentId": "wrk_ponto",
+      "name": "Usuários (Admin)"
+    },
+    {
+      "_id": "req_criar_usuario",
+      "_type": "request",
+      "parentId": "fld_usuarios",
+      "name": "Criar Usuário",
+      "method": "POST",
+      "url": "{{ _.base_url }}/api/usuarios",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"João Silva\",\n  \"email\": \"joao@triplex.com\",\n  \"senha\": \"123456\",\n  \"role\": \"USER\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.access_token }}"
+        }
+      ],
+      "authentication": {},
+      "parameters": [],
+      "description": "Requer ROLE_ADMIN. Copie o accessToken do Login para a variável access_token."
+    },
+    {
+      "_id": "req_listar_usuarios",
+      "_type": "request",
+      "parentId": "fld_usuarios",
+      "name": "Listar Usuários",
+      "method": "GET",
+      "url": "{{ _.base_url }}/api/usuarios",
+      "body": {},
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.access_token }}"
+        }
+      ],
+      "authentication": {},
+      "parameters": [],
+      "description": "Requer ROLE_ADMIN."
+    }
+  ]
+}
