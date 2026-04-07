@@ -9,14 +9,6 @@ export class PontoService {
 
   constructor(private http: HttpClient) {}
 
-  registrarEntrada(): Observable<RegistroPontoResponse> {
-    return this.http.post<RegistroPontoResponse>(`${this.apiUrl}/entrada`, null);
-  }
-
-  registrarSaida(): Observable<RegistroPontoResponse> {
-    return this.http.post<RegistroPontoResponse>(`${this.apiUrl}/saida`, null);
-  }
-
   verificarAberto(): Observable<PontoAbertoResponse> {
     return this.http.get<PontoAbertoResponse>(`${this.apiUrl}/aberto`);
   }

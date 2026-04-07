@@ -78,38 +78,19 @@ import { RegistroPontoResponse } from '../../core/models/ponto.model';
           <p class="text-4xl font-mono font-bold text-gray-800 mb-1">{{ horaAtual() }}</p>
           <p class="text-sm text-gray-500 mb-5">{{ dataAtual() }}</p>
 
-          @if (erro()) {
-            <div class="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded mb-4 text-sm">
-              {{ erro() }}
-            </div>
-          }
-
-          @if (sucesso()) {
-            <div class="bg-green-50 border border-green-200 text-green-700 px-3 py-2 rounded mb-4 text-sm">
-              {{ sucesso() }}
-            </div>
-          }
-
           @if (pontoAberto()) {
-            <p class="text-sm text-gray-500 mb-3">
-              Entrada às {{ horaEntradaAberta() | date:'HH:mm:ss' }}
-            </p>
-            <button
-              (click)="registrarSaida()"
-              [disabled]="processando()"
-              class="w-full bg-red-600 text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-red-700 disabled:opacity-50 transition-colors"
-            >
-              @if (processando()) { Processando... } @else { Registrar Saída }
-            </button>
+            <div class="bg-green-50 border border-green-200 text-green-700 px-3 py-2 rounded mb-4 text-sm">
+              Ponto aberto desde {{ horaEntradaAberta() | date:'HH:mm:ss' }}
+            </div>
           } @else {
-            <button
-              (click)="registrarEntrada()"
-              [disabled]="processando()"
-              class="w-full bg-green-600 text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-green-700 disabled:opacity-50 transition-colors"
-            >
-              @if (processando()) { Processando... } @else { Registrar Entrada }
-            </button>
+            <div class="bg-gray-50 border border-gray-200 text-gray-500 px-3 py-2 rounded mb-4 text-sm">
+              Nenhum ponto aberto
+            </div>
           }
+
+          <p class="text-xs text-gray-400 mt-2">
+            O registro de ponto é feito automaticamente ao entrar e sair de canais de voz no Discord.
+          </p>
 
           <p class="text-xs text-gray-400 mt-4">
             Olá, {{ auth.usuarioLogado()?.nome }}
@@ -124,9 +105,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   horaEntradaAberta = signal<string | null>(null);
   registros = signal<RegistroPontoResponse[]>([]);
   carregando = signal(true);
-  processando = signal(false);
-  erro = signal('');
-  sucesso = signal('');
   horaAtual = signal('');
   dataAtual = signal('');
 
@@ -146,40 +124,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.intervalo) clearInterval(this.intervalo);
-  }
-
-  registrarEntrada(): void {
-    this.processando.set(true);
-    this.limparMensagens();
-    this.pontoService.registrarEntrada().subscribe({
-      next: () => {
-        this.sucesso.set('Entrada registrada!');
-        this.processando.set(false);
-        this.carregarEstado();
-        this.carregarRegistros();
-      },
-      error: (err) => {
-        this.erro.set(err.error?.detail || 'Erro ao registrar entrada.');
-        this.processando.set(false);
-      },
-    });
-  }
-
-  registrarSaida(): void {
-    this.processando.set(true);
-    this.limparMensagens();
-    this.pontoService.registrarSaida().subscribe({
-      next: () => {
-        this.sucesso.set('Saída registrada!');
-        this.processando.set(false);
-        this.carregarEstado();
-        this.carregarRegistros();
-      },
-      error: (err) => {
-        this.erro.set(err.error?.detail || 'Erro ao registrar saída.');
-        this.processando.set(false);
-      },
-    });
   }
 
   formatarHoras(minutos: number): string {
@@ -216,8 +160,4 @@ export class DashboardComponent implements OnInit, OnDestroy {
     );
   }
 
-  private limparMensagens(): void {
-    this.erro.set('');
-    this.sucesso.set('');
-  }
 }
