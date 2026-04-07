@@ -1,13 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, tap } from 'rxjs';
+import { Observable, catchError, of, tap } from 'rxjs';
 import { LoginRequest, LoginResponse, UsuarioLogado } from '../models/auth.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly accessToken = signal<string | null>(null);
   private readonly usuario = signal<UsuarioLogado | null>(null);
+  private _inicializado = false;
+  private _inicializandoPromise: Promise<boolean> | null = null;
 
   readonly estaAutenticado = computed(() => !!this.accessToken());
   readonly usuarioLogado = computed(() => this.usuario());
@@ -22,10 +24,47 @@ export class AuthService {
     return this.accessToken();
   }
 
+  get inicializado(): boolean {
+    return this._inicializado;
+  }
+
+  inicializar(): Promise<boolean> {
+    if (this._inicializado) return Promise.resolve(this.estaAutenticado());
+    if (this._inicializandoPromise) return this._inicializandoPromise;
+
+    this._inicializandoPromise = new Promise<boolean>((resolve) => {
+      this.http
+        .post<LoginResponse>(`/auth/refresh`, null, { withCredentials: true })
+        .pipe(
+          tap((res) => this.definirSessao(res)),
+          catchError(() => of(null)),
+        )
+        .subscribe({
+          next: (res) => {
+            this._inicializado = true;
+            this._inicializandoPromise = null;
+            resolve(!!res);
+          },
+          error: () => {
+            this._inicializado = true;
+            this._inicializandoPromise = null;
+            resolve(false);
+          },
+        });
+    });
+
+    return this._inicializandoPromise;
+  }
+
   login(credenciais: LoginRequest): Observable<LoginResponse> {
     return this.http
       .post<LoginResponse>(`/auth/login`, credenciais, { withCredentials: true })
-      .pipe(tap((res) => this.definirSessao(res)));
+      .pipe(
+        tap((res) => {
+          this.definirSessao(res);
+          this._inicializado = true;
+        }),
+      );
   }
 
   refresh(): Observable<LoginResponse> {

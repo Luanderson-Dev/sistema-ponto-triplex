@@ -2,9 +2,17 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from './auth.service';
 
-export const authGuard: CanActivateFn = () => {
+async function aguardarInicializacao(auth: AuthService): Promise<void> {
+  if (!auth.inicializado) {
+    await auth.inicializar();
+  }
+}
+
+export const authGuard: CanActivateFn = async () => {
   const auth = inject(AuthService);
   const router = inject(Router);
+
+  await aguardarInicializacao(auth);
 
   if (auth.estaAutenticado()) {
     return true;
@@ -12,9 +20,11 @@ export const authGuard: CanActivateFn = () => {
   return router.createUrlTree(['/login']);
 };
 
-export const adminGuard: CanActivateFn = () => {
+export const adminGuard: CanActivateFn = async () => {
   const auth = inject(AuthService);
   const router = inject(Router);
+
+  await aguardarInicializacao(auth);
 
   if (auth.eAdmin()) {
     return true;
@@ -22,9 +32,11 @@ export const adminGuard: CanActivateFn = () => {
   return router.createUrlTree(['/']);
 };
 
-export const guestGuard: CanActivateFn = () => {
+export const guestGuard: CanActivateFn = async () => {
   const auth = inject(AuthService);
   const router = inject(Router);
+
+  await aguardarInicializacao(auth);
 
   if (!auth.estaAutenticado()) {
     return true;
