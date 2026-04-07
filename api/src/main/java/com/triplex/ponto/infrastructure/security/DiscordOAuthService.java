@@ -1,6 +1,7 @@
 package com.triplex.ponto.infrastructure.security;
 
 import tools.jackson.databind.JsonNode;
+import com.triplex.ponto.domain.Role;
 import com.triplex.ponto.domain.exception.DiscordAuthException;
 import com.triplex.ponto.infrastructure.config.DiscordProperties;
 import lombok.RequiredArgsConstructor;
@@ -56,13 +57,25 @@ public class DiscordOAuthService {
         return new DiscordUser(id, username, globalName, email);
     }
 
-    public void verificarMembroDoServidor(String accessToken) {
+    public JsonNode obterMembroDoServidor(String accessToken) {
         String guildId = discordProperties.getGuildId();
         try {
-            discordApiGet("/users/@me/guilds/" + guildId + "/member", accessToken);
+            return discordApiGet("/users/@me/guilds/" + guildId + "/member", accessToken);
         } catch (Exception e) {
             throw new DiscordAuthException("Você não é membro do servidor autorizado.");
         }
+    }
+
+    public Role determinarRole(JsonNode memberData) {
+        String rhRoleId = discordProperties.getRhRoleId();
+        if (rhRoleId != null && memberData.has("roles")) {
+            for (JsonNode roleNode : memberData.get("roles")) {
+                if (rhRoleId.equals(roleNode.asText())) {
+                    return Role.RH;
+                }
+            }
+        }
+        return Role.USER;
     }
 
     private JsonNode discordApiGet(String path, String accessToken) {

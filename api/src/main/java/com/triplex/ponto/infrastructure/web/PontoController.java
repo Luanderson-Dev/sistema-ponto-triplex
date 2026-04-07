@@ -60,7 +60,7 @@ public class PontoController {
     }
 
     @GetMapping("/admin")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('RH')")
     public List<RegistroPontoResponse> listarPontosAdmin(
             @RequestParam Long usuarioId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicio,

@@ -13,7 +13,7 @@ export class AuthService {
 
   readonly estaAutenticado = computed(() => !!this.accessToken());
   readonly usuarioLogado = computed(() => this.usuario());
-  readonly eAdmin = computed(() => this.usuario()?.role === 'ADMIN');
+  readonly eAdmin = computed(() => this.usuario()?.role === 'RH');
 
   constructor(
     private http: HttpClient,

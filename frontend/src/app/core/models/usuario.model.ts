@@ -2,7 +2,7 @@ export interface CriarUsuarioRequest {
   nome: string;
   email: string;
   senha: string;
-  role: 'ADMIN' | 'USER';
+  role: 'RH' | 'USER';
 }
 
 export interface UsuarioResponse {

@@ -81,7 +81,7 @@ import { UsuarioService } from '../../../core/services/usuario.service';
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="USER">Usuário</option>
-                <option value="ADMIN">Administrador</option>
+                <option value="RH">RH</option>
               </select>
             </div>
           </div>
@@ -125,7 +125,7 @@ import { UsuarioService } from '../../../core/services/usuario.service';
                 <td class="px-6 py-4">
                   <span
                     class="px-2 py-1 text-xs rounded-full"
-                    [class]="u.role === 'ADMIN' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'"
+                    [class]="u.role === 'RH' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'"
                   >
                     {{ u.role }}
                   </span>

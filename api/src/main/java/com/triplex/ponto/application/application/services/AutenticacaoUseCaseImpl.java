@@ -39,15 +39,23 @@ public class AutenticacaoUseCaseImpl implements AutenticacaoUseCase {
     @Transactional
     public RespostaLogin loginComDiscord(String code) {
         String discordAccessToken = discordOAuthService.trocarCodePorToken(code);
-        discordOAuthService.verificarMembroDoServidor(discordAccessToken);
+        var memberData = discordOAuthService.obterMembroDoServidor(discordAccessToken);
         DiscordOAuthService.DiscordUser discordUser = discordOAuthService.obterUsuario(discordAccessToken);
+        Role discordRole = discordOAuthService.determinarRole(memberData);
 
         Usuario usuario = usuarioRepository.buscarPorDiscordId(discordUser.id())
+                .map(existente -> {
+                    if (existente.getRole() != discordRole) {
+                        existente.setRole(discordRole);
+                        return usuarioRepository.salvar(existente);
+                    }
+                    return existente;
+                })
                 .orElseGet(() -> {
                     String email = discordUser.email() != null
                             ? discordUser.email()
                             : discordUser.id() + "@discord.user";
-                    Usuario novo = new Usuario(null, discordUser.globalName(), email, null, Role.USER, discordUser.id());
+                    Usuario novo = new Usuario(null, discordUser.globalName(), email, null, discordRole, discordUser.id());
                     return usuarioRepository.salvar(novo);
                 });
 

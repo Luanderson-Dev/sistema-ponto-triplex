@@ -10,6 +10,7 @@ public class DiscordProperties {
     private String clientSecret;
     private String redirectUri;
     private String guildId;
+    private String rhRoleId;
 
     public String getClientId() { return clientId; }
     public void setClientId(String clientId) { this.clientId = clientId; }
@@ -22,4 +23,7 @@ public class DiscordProperties {
 
     public String getGuildId() { return guildId; }
     public void setGuildId(String guildId) { this.guildId = guildId; }
+
+    public String getRhRoleId() { return rhRoleId; }
+    public void setRhRoleId(String rhRoleId) { this.rhRoleId = rhRoleId; }
 }

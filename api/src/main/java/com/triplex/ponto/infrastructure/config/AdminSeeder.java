@@ -45,7 +45,7 @@ public class AdminSeeder implements ApplicationRunner {
         }
 
         String nome = adminNome != null ? adminNome : "Administrador";
-        Usuario admin = new Usuario(null, nome, adminEmail, passwordEncoder.encode(adminSenha), Role.ADMIN);
+        Usuario admin = new Usuario(null, nome, adminEmail, passwordEncoder.encode(adminSenha), Role.RH);
         usuarioRepository.salvar(admin);
         log.info("Admin '{}' criado com sucesso.", adminEmail);
     }
