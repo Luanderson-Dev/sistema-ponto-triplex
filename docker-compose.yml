@@ -59,8 +59,10 @@ volumes:
 
 networks:
   ponto_network:
+    name: ponto_network
     driver: bridge
   triplex_bot_network:
+    name: triplex_bot_network
     driver: bridge
   server_proxy:
     external: true
