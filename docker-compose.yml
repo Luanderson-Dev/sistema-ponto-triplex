@@ -7,6 +7,8 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-ponto_db}
     volumes:
       - db_data:/var/lib/postgresql/data
+    networks:
+      - ponto_network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
@@ -21,11 +23,15 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
       SPRING_JPA_SHOW_SQL: "false"
       JWT_SEGREDO: ${JWT_SEGREDO}
+      BOT_API_KEY: ${BOT_API_KEY}
       APP_SECURITY_COOKIE_SEGURO: "true"
       DISCORD_CLIENT_ID: ${DISCORD_CLIENT_ID:-}
       DISCORD_CLIENT_SECRET: ${DISCORD_CLIENT_SECRET:-}
       DISCORD_REDIRECT_URI: ${DISCORD_REDIRECT_URI:-}
       DISCORD_GUILD_ID: ${DISCORD_GUILD_ID:-708895475020857386}
+    networks:
+      - ponto_network
+      - triplex_bot_network
     depends_on:
       db:
         condition: service_healthy
@@ -34,16 +40,27 @@ services:
     build: ./frontend
     environment:
       NODE_ENV: production
+    networks:
+      - ponto_network
 
   nginx:
     image: nginx:alpine
-    ports:
-      - "${APP_PORT:-80}:80"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - ponto_network
+      - server_proxy
     depends_on:
       - api
       - frontend
 
 volumes:
   db_data:
+
+networks:
+  ponto_network:
+    driver: bridge
+  triplex_bot_network:
+    driver: bridge
+  server_proxy:
+    external: true
