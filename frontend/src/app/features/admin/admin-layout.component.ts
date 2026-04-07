@@ -44,12 +44,6 @@ import { AuthService } from '../../core/auth/auth.service';
                   {{ auth.usuarioLogado()?.role }}
                 </span>
               </span>
-              <a
-                routerLink="/perfil"
-                class="text-sm text-blue-600 hover:text-blue-800 font-medium"
-              >
-                Perfil
-              </a>
               <button
                 (click)="auth.logout()"
                 class="text-sm text-red-600 hover:text-red-800 font-medium"

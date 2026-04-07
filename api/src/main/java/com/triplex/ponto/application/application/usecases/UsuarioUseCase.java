@@ -8,5 +8,4 @@ import java.util.List;
 public interface UsuarioUseCase {
     Usuario criar(String nome, String email, String senha, Role role);
     List<Usuario> listarTodos();
-    void alterarSenha(Long usuarioId, String senhaAtual, String novaSenha);
 }

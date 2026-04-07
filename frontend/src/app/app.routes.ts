@@ -37,11 +37,6 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/admin/ponto/admin-pontos.component').then((m) => m.AdminPontosComponent),
       },
-      {
-        path: 'perfil',
-        loadComponent: () =>
-          import('./features/admin/perfil/perfil.component').then((m) => m.PerfilComponent),
-      },
     ],
   },
   { path: '**', redirectTo: 'login' },
