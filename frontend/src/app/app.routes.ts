@@ -26,11 +26,6 @@ export const routes: Routes = [
           import('./features/admin/dashboard.component').then((m) => m.DashboardComponent),
       },
       {
-        path: 'ponto',
-        loadComponent: () =>
-          import('./features/admin/ponto/ponto.component').then((m) => m.PontoComponent),
-      },
-      {
         path: 'usuarios',
         canActivate: [adminGuard],
         loadComponent: () =>

@@ -13,8 +13,9 @@ import { AuthService } from '../../core/auth/auth.service';
             <div class="flex items-center space-x-8">
               <span class="text-xl font-bold text-gray-800">Ponto da Triplex</span>
               <a
-                routerLink="/ponto"
+                routerLink="/"
                 routerLinkActive="text-blue-600 border-b-2 border-blue-600"
+                [routerLinkActiveOptions]="{ exact: true }"
                 class="text-gray-600 hover:text-gray-800 h-16 flex items-center px-1 text-sm font-medium"
               >
                 Meu Ponto
