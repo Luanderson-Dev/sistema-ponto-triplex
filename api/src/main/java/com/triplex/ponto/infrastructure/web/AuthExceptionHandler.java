@@ -1,6 +1,6 @@
 package com.triplex.ponto.infrastructure.web;
 
-import com.triplex.ponto.domain.exception.CredenciaisInvalidasException;
+import com.triplex.ponto.domain.exception.DiscordAuthException;
 import com.triplex.ponto.domain.exception.SenhaIncorretaException;
 import com.triplex.ponto.domain.exception.TokenInvalidoException;
 import org.springframework.http.HttpStatus;
@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class AuthExceptionHandler {
 
-    @ExceptionHandler(CredenciaisInvalidasException.class)
-    public ProblemDetail handleCredenciaisInvalidas(CredenciaisInvalidasException ex) {
-        return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, ex.getMessage());
+    @ExceptionHandler(DiscordAuthException.class)
+    public ProblemDetail handleDiscordAuth(DiscordAuthException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
     }
 
     @ExceptionHandler(TokenInvalidoException.class)

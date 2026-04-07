@@ -1,0 +1,2 @@
+ALTER TABLE usuarios ADD COLUMN discord_id VARCHAR(30) UNIQUE;
+ALTER TABLE usuarios ALTER COLUMN senha_hash DROP NOT NULL;

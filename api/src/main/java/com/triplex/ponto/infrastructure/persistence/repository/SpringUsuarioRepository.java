@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface SpringUsuarioRepository extends JpaRepository<UsuarioEntity, Long> {
     Optional<UsuarioEntity> findByEmail(String email);
+    Optional<UsuarioEntity> findByDiscordId(String discordId);
 }

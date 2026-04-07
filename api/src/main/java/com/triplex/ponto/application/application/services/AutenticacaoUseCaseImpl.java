@@ -4,12 +4,9 @@ import com.triplex.ponto.application.application.ports.RefreshTokenRepositoryPor
 import com.triplex.ponto.application.application.ports.TokenPort;
 import com.triplex.ponto.application.application.ports.UsuarioRepositoryPort;
 import com.triplex.ponto.application.application.usecases.AutenticacaoUseCase;
-import com.triplex.ponto.domain.RefreshToken;
-import com.triplex.ponto.domain.RespostaLogin;
-import com.triplex.ponto.domain.Usuario;
-import com.triplex.ponto.domain.exception.CredenciaisInvalidasException;
+import com.triplex.ponto.domain.*;
 import com.triplex.ponto.domain.exception.TokenInvalidoException;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import com.triplex.ponto.infrastructure.security.DiscordOAuthService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,46 +18,40 @@ public class AutenticacaoUseCaseImpl implements AutenticacaoUseCase {
     private final UsuarioRepositoryPort usuarioRepository;
     private final RefreshTokenRepositoryPort refreshTokenRepository;
     private final TokenPort tokenPort;
-    private final PasswordEncoder passwordEncoder;
+    private final DiscordOAuthService discordOAuthService;
     private final long expiracaoRefreshTokenMs;
 
     public AutenticacaoUseCaseImpl(
             UsuarioRepositoryPort usuarioRepository,
             RefreshTokenRepositoryPort refreshTokenRepository,
             TokenPort tokenPort,
-            PasswordEncoder passwordEncoder,
+            DiscordOAuthService discordOAuthService,
             com.triplex.ponto.infrastructure.config.JwtProperties jwtProperties
     ) {
         this.usuarioRepository = usuarioRepository;
         this.refreshTokenRepository = refreshTokenRepository;
         this.tokenPort = tokenPort;
-        this.passwordEncoder = passwordEncoder;
+        this.discordOAuthService = discordOAuthService;
         this.expiracaoRefreshTokenMs = jwtProperties.getExpiracaoRefreshToken();
     }
 
     @Override
     @Transactional
-    public RespostaLogin login(String email, String senha) {
-        Usuario usuario = usuarioRepository.buscarPorEmail(email)
-                .orElseThrow(CredenciaisInvalidasException::new);
+    public RespostaLogin loginComDiscord(String code) {
+        String discordAccessToken = discordOAuthService.trocarCodePorToken(code);
+        discordOAuthService.verificarMembroDoServidor(discordAccessToken);
+        DiscordOAuthService.DiscordUser discordUser = discordOAuthService.obterUsuario(discordAccessToken);
 
-        if (!passwordEncoder.matches(senha, usuario.getSenhaHash())) {
-            throw new CredenciaisInvalidasException();
-        }
+        Usuario usuario = usuarioRepository.buscarPorDiscordId(discordUser.id())
+                .orElseGet(() -> {
+                    String email = discordUser.email() != null
+                            ? discordUser.email()
+                            : discordUser.id() + "@discord.user";
+                    Usuario novo = new Usuario(null, discordUser.globalName(), email, null, Role.USER, discordUser.id());
+                    return usuarioRepository.salvar(novo);
+                });
 
-        String accessToken = tokenPort.gerarAccessToken(usuario.getId(), usuario.getEmail(), usuario.getRole());
-        String refreshTokenValue = tokenPort.gerarRefreshToken();
-
-        Instant agora = Instant.now();
-        RefreshToken refreshToken = new RefreshToken(
-                refreshTokenValue,
-                usuario.getId(),
-                agora,
-                agora.plus(expiracaoRefreshTokenMs, ChronoUnit.MILLIS)
-        );
-        refreshTokenRepository.salvar(refreshToken);
-
-        return new RespostaLogin(accessToken, refreshTokenValue, usuario.getNome(), usuario.getEmail(), usuario.getRole().name());
+        return gerarRespostaLogin(usuario);
     }
 
     @Override
@@ -80,19 +71,23 @@ public class AutenticacaoUseCaseImpl implements AutenticacaoUseCase {
         Usuario usuario = usuarioRepository.buscarPorId(refreshToken.getUsuarioId())
                 .orElseThrow(TokenInvalidoException::new);
 
-        String novoAccessToken = tokenPort.gerarAccessToken(usuario.getId(), usuario.getEmail(), usuario.getRole());
-        String novoRefreshTokenValue = tokenPort.gerarRefreshToken();
+        return gerarRespostaLogin(usuario);
+    }
+
+    private RespostaLogin gerarRespostaLogin(Usuario usuario) {
+        String accessToken = tokenPort.gerarAccessToken(usuario.getId(), usuario.getEmail(), usuario.getRole());
+        String refreshTokenValue = tokenPort.gerarRefreshToken();
 
         Instant agora = Instant.now();
-        RefreshToken novoRefreshToken = new RefreshToken(
-                novoRefreshTokenValue,
+        RefreshToken refreshToken = new RefreshToken(
+                refreshTokenValue,
                 usuario.getId(),
                 agora,
                 agora.plus(expiracaoRefreshTokenMs, ChronoUnit.MILLIS)
         );
-        refreshTokenRepository.salvar(novoRefreshToken);
+        refreshTokenRepository.salvar(refreshToken);
 
-        return new RespostaLogin(novoAccessToken, novoRefreshTokenValue, usuario.getNome(), usuario.getEmail(), usuario.getRole().name());
+        return new RespostaLogin(accessToken, refreshTokenValue, usuario.getNome(), usuario.getEmail(), usuario.getRole().name());
     }
 
     @Override

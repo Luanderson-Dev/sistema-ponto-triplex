@@ -24,6 +24,12 @@ public class UsuarioRepositoryAdapter implements UsuarioRepositoryPort {
     }
 
     @Override
+    public Optional<Usuario> buscarPorDiscordId(String discordId) {
+        return repository.findByDiscordId(discordId)
+                .map(mapper::toDomain);
+    }
+
+    @Override
     public Optional<Usuario> buscarPorId(Long id) {
         return repository.findById(id)
                 .map(mapper::toDomain);

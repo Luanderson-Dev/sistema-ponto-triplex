@@ -1,11 +1,8 @@
 import { Component, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { AuthService } from '../../core/auth/auth.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule],
   template: `
     <div class="min-h-screen flex items-center justify-center bg-gray-100">
       <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
@@ -17,73 +14,40 @@ import { AuthService } from '../../core/auth/auth.service';
           </div>
         }
 
-        <form (ngSubmit)="entrar()" #loginForm="ngForm">
-          <div class="mb-4">
-            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
-            <input
-              id="email"
-              type="email"
-              [(ngModel)]="email"
-              name="email"
-              required
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="seu@email.com"
-            />
-          </div>
-
-          <div class="mb-6">
-            <label for="senha" class="block text-sm font-medium text-gray-700 mb-1">Senha</label>
-            <input
-              id="senha"
-              type="password"
-              [(ngModel)]="senha"
-              name="senha"
-              required
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="••••••"
-            />
-          </div>
-
-          <button
-            type="submit"
-            [disabled]="carregando()"
-            class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            @if (carregando()) {
-              Entrando...
-            } @else {
-              Entrar
-            }
-          </button>
-        </form>
+        <button
+          type="button"
+          (click)="entrarComDiscord()"
+          [disabled]="carregando()"
+          class="w-full flex items-center justify-center gap-2 bg-[#5865F2] text-white py-2 px-4 rounded-md hover:bg-[#4752C4] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        >
+          <svg width="20" height="15" viewBox="0 0 127.14 96.36" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
+          </svg>
+          @if (carregando()) {
+            Entrando...
+          } @else {
+            Entrar com Discord
+          }
+        </button>
       </div>
     </div>
   `,
 })
 export class LoginComponent {
-  email = '';
-  senha = '';
   erro = signal('');
   carregando = signal(false);
 
-  constructor(
-    private auth: AuthService,
-    private router: Router,
-  ) {}
+  constructor(private http: HttpClient) {}
 
-  entrar(): void {
-    if (!this.email || !this.senha) return;
-
+  entrarComDiscord(): void {
     this.carregando.set(true);
     this.erro.set('');
 
-    this.auth.login({ email: this.email, senha: this.senha }).subscribe({
-      next: () => {
-        this.router.navigate(['/']);
-      },
-      error: (err) => {
+    this.http.get<{ url: string }>('/auth/discord/url').subscribe({
+      next: (res) => (window.location.href = res.url),
+      error: () => {
         this.carregando.set(false);
-        this.erro.set(err.status === 401 ? 'E-mail ou senha incorretos.' : 'Erro ao conectar com o servidor.');
+        this.erro.set('Erro ao iniciar autenticação com Discord.');
       },
     });
   }

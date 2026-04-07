@@ -8,6 +8,7 @@ import java.util.Optional;
 public interface UsuarioRepositoryPort {
     Optional<Usuario> buscarPorEmail(String email);
     Optional<Usuario> buscarPorId(Long id);
+    Optional<Usuario> buscarPorDiscordId(String discordId);
     Usuario salvar(Usuario usuario);
     List<Usuario> listarTodos();
 }

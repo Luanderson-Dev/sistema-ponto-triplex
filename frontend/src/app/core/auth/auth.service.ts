@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, catchError, of, tap } from 'rxjs';
-import { LoginRequest, LoginResponse, UsuarioLogado } from '../models/auth.model';
+import { LoginResponse, UsuarioLogado } from '../models/auth.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -56,9 +56,12 @@ export class AuthService {
     return this._inicializandoPromise;
   }
 
-  login(credenciais: LoginRequest): Observable<LoginResponse> {
+  loginComDiscord(code: string): Observable<LoginResponse> {
     return this.http
-      .post<LoginResponse>(`/auth/login`, credenciais, { withCredentials: true })
+      .post<LoginResponse>(`/auth/discord/token`, null, {
+        params: { code },
+        withCredentials: true,
+      })
       .pipe(
         tap((res) => {
           this.definirSessao(res);

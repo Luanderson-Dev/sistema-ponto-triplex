@@ -8,6 +8,13 @@ export const routes: Routes = [
     loadComponent: () => import('./features/login/login.component').then((m) => m.LoginComponent),
   },
   {
+    path: 'auth/discord/callback',
+    loadComponent: () =>
+      import('./features/login/discord-callback.component').then(
+        (m) => m.DiscordCallbackComponent,
+      ),
+  },
+  {
     path: '',
     canActivate: [authGuard],
     loadComponent: () =>

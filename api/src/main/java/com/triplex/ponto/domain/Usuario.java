@@ -6,6 +6,7 @@ public class Usuario {
     private String email;
     private String senhaHash;
     private Role role;
+    private String discordId;
 
     public Usuario() {}
 
@@ -15,6 +16,15 @@ public class Usuario {
         this.email = email;
         this.senhaHash = senhaHash;
         this.role = role;
+    }
+
+    public Usuario(Long id, String nome, String email, String senhaHash, Role role, String discordId) {
+        this.id = id;
+        this.nome = nome;
+        this.email = email;
+        this.senhaHash = senhaHash;
+        this.role = role;
+        this.discordId = discordId;
     }
 
     public Long getId() { return id; }
@@ -31,4 +41,7 @@ public class Usuario {
 
     public Role getRole() { return role; }
     public void setRole(Role role) { this.role = role; }
+
+    public String getDiscordId() { return discordId; }
+    public void setDiscordId(String discordId) { this.discordId = discordId; }
 }
