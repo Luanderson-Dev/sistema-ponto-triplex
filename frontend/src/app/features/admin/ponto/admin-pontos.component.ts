@@ -23,7 +23,7 @@ import { UsuarioResponse } from '../../../core/models/usuario.model';
           >
             <option [ngValue]="null">Selecione...</option>
             @for (u of usuarios(); track u.id) {
-              <option [ngValue]="u.id">{{ u.nome }} ({{ u.email }})</option>
+              <option [ngValue]="u.id">{{ u.nome }}</option>
             }
           </select>
         </div>
