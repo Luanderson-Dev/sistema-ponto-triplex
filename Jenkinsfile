@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        PROJECT_DIR = '/apps/ponto-da-triplex'
+        PROJECT_DIR = '/apps/sistema-ponto-triplex'
     }
 
     stages {
