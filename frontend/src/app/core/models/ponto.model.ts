@@ -12,3 +12,10 @@ export interface PontoAbertoResponse {
   aberto: boolean;
   horaEntrada: string | null;
 }
+
+export interface LeaderboardEntryResponse {
+  posicao: number;
+  nomeUsuario: string;
+  avatarUrl: string | null;
+  totalMinutos: number;
+}

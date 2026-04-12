@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { PontoAbertoResponse, RegistroPontoResponse } from '../models/ponto.model';
+import { LeaderboardEntryResponse, PontoAbertoResponse, RegistroPontoResponse } from '../models/ponto.model';
 
 @Injectable({ providedIn: 'root' })
 export class PontoService {
@@ -15,6 +15,10 @@ export class PontoService {
 
   listarMeus(): Observable<RegistroPontoResponse[]> {
     return this.http.get<RegistroPontoResponse[]>(`${this.apiUrl}/meus`);
+  }
+
+  listarLeaderboard(): Observable<LeaderboardEntryResponse[]> {
+    return this.http.get<LeaderboardEntryResponse[]>(`${this.apiUrl}/leaderboard`);
   }
 
   listarAdmin(usuarioId: number, dataInicio: string, dataFim: string): Observable<RegistroPontoResponse[]> {

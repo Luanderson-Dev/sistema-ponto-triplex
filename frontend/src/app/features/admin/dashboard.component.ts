@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, computed, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/auth/auth.service';
@@ -88,6 +88,10 @@ import { RegistroPontoResponse } from '../../core/models/ponto.model';
             </div>
           }
 
+          <div class="bg-indigo-50 border border-indigo-200 text-indigo-700 px-3 py-2 rounded mb-4 text-sm">
+            Total: <span class="font-bold">{{ formatarHoras(totalMinutos()) }}</span>
+          </div>
+
           <p class="text-xs text-gray-400 mt-2">
             O registro de ponto é feito automaticamente ao entrar e sair de canais de voz no Discord.
           </p>
@@ -107,6 +111,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   carregando = signal(true);
   horaAtual = signal('');
   dataAtual = signal('');
+
+  totalMinutos = computed(() =>
+    this.registros().reduce((acc, r) => acc + r.minutosTrabalhados, 0)
+  );
 
   private intervalo: ReturnType<typeof setInterval> | null = null;
 

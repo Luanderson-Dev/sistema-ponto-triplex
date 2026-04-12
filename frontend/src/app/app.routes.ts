@@ -26,6 +26,11 @@ export const routes: Routes = [
           import('./features/admin/dashboard.component').then((m) => m.DashboardComponent),
       },
       {
+        path: 'leaderboard',
+        loadComponent: () =>
+          import('./features/admin/leaderboard/leaderboard.component').then((m) => m.LeaderboardComponent),
+      },
+      {
         path: 'usuarios',
         canActivate: [adminGuard],
         loadComponent: () =>

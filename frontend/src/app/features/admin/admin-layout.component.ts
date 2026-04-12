@@ -20,6 +20,13 @@ import { AuthService } from '../../core/auth/auth.service';
               >
                 Meu Ponto
               </a>
+              <a
+                routerLink="/leaderboard"
+                routerLinkActive="text-blue-600 border-b-2 border-blue-600"
+                class="text-gray-600 hover:text-gray-800 h-16 flex items-center px-1 text-sm font-medium"
+              >
+                Leaderboard
+              </a>
               @if (auth.eAdmin()) {
                 <a
                   routerLink="/pontos"
