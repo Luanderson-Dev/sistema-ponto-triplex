@@ -45,17 +45,23 @@ public class AutenticacaoUseCaseImpl implements AutenticacaoUseCase {
 
         Usuario usuario = usuarioRepository.buscarPorDiscordId(discordUser.id())
                 .map(existente -> {
+                    boolean atualizado = false;
                     if (existente.getRole() != discordRole) {
                         existente.setRole(discordRole);
-                        return usuarioRepository.salvar(existente);
+                        atualizado = true;
                     }
-                    return existente;
+                    if (discordUser.avatarUrl() != null && !discordUser.avatarUrl().equals(existente.getAvatarUrl())) {
+                        existente.setAvatarUrl(discordUser.avatarUrl());
+                        atualizado = true;
+                    }
+                    return atualizado ? usuarioRepository.salvar(existente) : existente;
                 })
                 .orElseGet(() -> {
                     String email = discordUser.email() != null
                             ? discordUser.email()
                             : discordUser.id() + "@discord.user";
                     Usuario novo = new Usuario(null, discordUser.globalName(), email, null, discordRole, discordUser.id());
+                    novo.setAvatarUrl(discordUser.avatarUrl());
                     return usuarioRepository.salvar(novo);
                 });
 

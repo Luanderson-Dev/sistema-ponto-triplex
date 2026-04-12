@@ -7,6 +7,7 @@ public class Usuario {
     private String senhaHash;
     private Role role;
     private String discordId;
+    private String avatarUrl;
 
     public Usuario() {}
 
@@ -44,4 +45,7 @@ public class Usuario {
 
     public String getDiscordId() { return discordId; }
     public void setDiscordId(String discordId) { this.discordId = discordId; }
+
+    public String getAvatarUrl() { return avatarUrl; }
+    public void setAvatarUrl(String avatarUrl) { this.avatarUrl = avatarUrl; }
 }

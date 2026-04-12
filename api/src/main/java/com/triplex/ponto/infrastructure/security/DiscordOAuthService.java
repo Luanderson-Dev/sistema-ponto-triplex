@@ -53,8 +53,13 @@ public class DiscordOAuthService {
         String email = response.has("email") && !response.get("email").isNull()
                 ? response.get("email").asText()
                 : null;
+        String avatarUrl = null;
+        if (response.has("avatar") && !response.get("avatar").isNull()) {
+            String avatarHash = response.get("avatar").asText();
+            avatarUrl = "https://cdn.discordapp.com/avatars/" + id + "/" + avatarHash + ".png?size=128";
+        }
 
-        return new DiscordUser(id, username, globalName, email);
+        return new DiscordUser(id, username, globalName, email, avatarUrl);
     }
 
     public JsonNode obterMembroDoServidor(String accessToken) {
@@ -87,5 +92,5 @@ public class DiscordOAuthService {
                 .body(JsonNode.class);
     }
 
-    public record DiscordUser(String id, String username, String globalName, String email) {}
+    public record DiscordUser(String id, String username, String globalName, String email, String avatarUrl) {}
 }

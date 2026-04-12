@@ -5,6 +5,8 @@ import com.triplex.ponto.application.application.usecases.PontoUseCase;
 import com.triplex.ponto.domain.DadosToken;
 import com.triplex.ponto.domain.RegistroPonto;
 import com.triplex.ponto.domain.Usuario;
+import com.triplex.ponto.infrastructure.persistence.repository.SpringRegistroPontoRepository;
+import com.triplex.ponto.infrastructure.web.dto.LeaderboardEntryResponse;
 import com.triplex.ponto.infrastructure.web.dto.PontoAbertoResponse;
 import com.triplex.ponto.infrastructure.web.dto.RegistroPontoResponse;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -28,6 +31,7 @@ import java.util.stream.Collectors;
 public class PontoController {
     private final PontoUseCase pontoUseCase;
     private final UsuarioRepositoryPort usuarioRepository;
+    private final SpringRegistroPontoRepository springRegistroPontoRepository;
 
     @PostMapping("/entrada")
     @ResponseStatus(HttpStatus.CREATED)
@@ -72,6 +76,19 @@ public class PontoController {
         Usuario usuario = buscarUsuario(usuarioId);
         return pontoUseCase.listarPorUsuarioIdEPeriodo(usuarioId, inicio, fim).stream()
                 .map(p -> RegistroPontoResponse.fromDomain(p, usuario))
+                .toList();
+    }
+
+    @GetMapping("/leaderboard")
+    public List<LeaderboardEntryResponse> leaderboard() {
+        AtomicInteger posicao = new AtomicInteger(1);
+        return springRegistroPontoRepository.findLeaderboard().stream()
+                .map(p -> new LeaderboardEntryResponse(
+                        posicao.getAndIncrement(),
+                        p.getNomeUsuario(),
+                        p.getAvatarUrl(),
+                        p.getTotalMinutos()
+                ))
                 .toList();
     }
 

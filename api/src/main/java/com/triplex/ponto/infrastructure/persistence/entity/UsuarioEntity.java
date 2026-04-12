@@ -29,4 +29,7 @@ public class UsuarioEntity {
 
     @Column(unique = true)
     private String discordId;
+
+    @Column(length = 512)
+    private String avatarUrl;
 }
