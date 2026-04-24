@@ -6,14 +6,18 @@ public record UsuarioResponse(
         Long id,
         String nome,
         String email,
-        String role
+        String role,
+        String discordId,
+        String avatarUrl
 ) {
     public static UsuarioResponse fromDomain(Usuario usuario) {
         return new UsuarioResponse(
                 usuario.getId(),
                 usuario.getNome(),
                 usuario.getEmail(),
-                usuario.getRole().name()
+                usuario.getRole().name(),
+                usuario.getDiscordId(),
+                usuario.getAvatarUrl()
         );
     }
 }

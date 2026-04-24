@@ -41,4 +41,29 @@ public class UsuarioUseCaseImpl implements UsuarioUseCase {
         usuario.setAvatarUrl(avatarUrl);
         usuarioRepository.salvar(usuario);
     }
+
+    @Override
+    public Usuario buscarUsuarioPorDiscordId(String discordId) {
+        return this.usuarioRepository.buscarPorDiscordId(discordId)
+                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
+    }
+
+    @Override
+    public boolean sincronizarDadosDiscord(String discordId, String nomeUsuario, String avatarUrl) {
+        Usuario usuario = usuarioRepository.buscarPorDiscordId(discordId)
+                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
+        boolean mudou = false;
+        if (nomeUsuario != null && !nomeUsuario.isBlank() && !nomeUsuario.equals(usuario.getNome())) {
+            usuario.setNome(nomeUsuario);
+            mudou = true;
+        }
+        if (avatarUrl != null && !avatarUrl.equals(usuario.getAvatarUrl())) {
+            usuario.setAvatarUrl(avatarUrl);
+            mudou = true;
+        }
+        if (mudou) {
+            usuarioRepository.salvar(usuario);
+        }
+        return mudou;
+    }
 }

@@ -9,4 +9,6 @@ public interface UsuarioUseCase {
     List<Usuario> listarTodos();
     Usuario buscarOuCriarUsuario(String discordId, String nomeUsuario);
     void updateAvatarUrl(String discordId, String avatarUrl);
+    Usuario buscarUsuarioPorDiscordId(String discordId);
+    boolean sincronizarDadosDiscord(String discordId, String nomeUsuario, String avatarUrl);
 }
