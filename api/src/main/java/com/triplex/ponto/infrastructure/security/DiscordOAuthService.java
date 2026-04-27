@@ -71,6 +71,28 @@ public class DiscordOAuthService {
         }
     }
 
+    public String extrairNomeNoServidor(JsonNode memberData, DiscordUser fallback) {
+        if (memberData != null) {
+            if (memberData.has("nick") && !memberData.get("nick").isNull()) {
+                String nick = memberData.get("nick").asText();
+                if (!nick.isBlank()) {
+                    return nick;
+                }
+            }
+            JsonNode user = memberData.get("user");
+            if (user != null && user.has("global_name") && !user.get("global_name").isNull()) {
+                String globalName = user.get("global_name").asText();
+                if (!globalName.isBlank()) {
+                    return globalName;
+                }
+            }
+        }
+        if (fallback.globalName() != null && !fallback.globalName().isBlank()) {
+            return fallback.globalName();
+        }
+        return fallback.username();
+    }
+
     public Role determinarRole(JsonNode memberData) {
         String rhRoleId = discordProperties.getRhRoleId();
         if (rhRoleId != null && memberData.has("roles")) {
